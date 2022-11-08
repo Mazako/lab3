@@ -1,9 +1,13 @@
 package view;
 
+import model.GroupOfAnimals;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -15,7 +19,7 @@ public class MainFrame extends JFrame implements ActionListener {
     public static final int BUTTON_PANEL_WIDTH = 630;
     public static final int PADDING_LENGTH = 15;
 
-    private TableView tableView = new TableView();
+    private TableView tableView;
     private final JPanel panel = new JPanel();
     private final JPanel buttonPanel = new JPanel();
 
@@ -29,8 +33,11 @@ public class MainFrame extends JFrame implements ActionListener {
     private final JButton productButton = new JButton("Iloczyn grup");
     private final JButton symDiffButton = new JButton("Różnica symetryczna");
 
+    private List<GroupOfAnimals> groupOfAnimalsList = new ArrayList<>();
+
 
     public MainFrame() {
+        tableView = new TableView(groupOfAnimalsList);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);

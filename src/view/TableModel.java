@@ -1,11 +1,13 @@
 package view;
 
+import model.Animal;
 import model.GroupOfAnimals;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.Iterator;
 import java.util.List;
 
-public class TableModel extends DefaultTableModel {
+class TableModel extends DefaultTableModel {
 
     public static final String[] GROUP_LIST_HEADERS = new String[] {
             "Nazwa grupy",
@@ -24,13 +26,20 @@ public class TableModel extends DefaultTableModel {
 
     public TableModel(List<GroupOfAnimals> groupOfAnimalsList) {
         super(GROUP_LIST_HEADERS, 0);
-        //TODO: dodać dodawanie
+        for (GroupOfAnimals group : groupOfAnimalsList) {
+            addRow(new Object[]{group.getName(), group.getCollectionType().getDescription(), group.size()});
+        }
 
     }
 
     public TableModel(GroupOfAnimals groupOfAnimals) {
         super(GROUP_HEADERS, 0);
         //todo: dodać dodwanie
+        Iterator<Animal> iterator = groupOfAnimals.iterator();
+        while (iterator.hasNext()) {
+            Animal animal = iterator.next();
+            addRow(new Object[]{animal.getName(), animal.getType(), animal.getAge(), animal.getWeight(), animal.getSpecies()});
+        }
     }
 
 

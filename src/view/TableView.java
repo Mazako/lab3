@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
-public class TableView extends JScrollPane {
+class TableView extends JScrollPane {
     private final JTable table;
     private TableModel tableModel;
 
