@@ -1,8 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 public class GroupOfAnimals implements Iterable<Animal>, Serializable {
 
@@ -39,6 +38,32 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
     public void add(Animal animal) {
         collection.add(animal);
     }
+
+    public void sortByName() throws AnimalException {
+        if(!isSortable()) {
+            throw new AnimalException("Kolekcji " + collectionType + " nie można sortować.");
+        }
+         Collections.sort((List<Animal>) collection, Comparator.comparing(Animal::getName));
+    }
+
+    public void sortByAge() throws AnimalException {
+        if (!isSortable()) {
+            throw new AnimalException("Kolekcji " + collectionType + " nie można sortować.");
+        }
+        Collections.sort((List<Animal>) collection, Comparator.comparingInt(Animal::getAge));
+    }
+
+    public void sortByWeight() throws AnimalException {
+        if (!isSortable()) {
+            throw new AnimalException("Kolekcji " + collectionType + " nie można sortować.");
+        }
+        Collections.sort((List<Animal>) collection, Comparator.comparingDouble(Animal::getWeight));
+    }
+
+    private boolean isSortable() {
+        return collectionType != CollectionType.HASH_SET && collectionType != CollectionType.TREE_SET;
+    }
+
     public CollectionType getCollectionType() {
         return collectionType;
     }

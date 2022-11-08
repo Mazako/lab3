@@ -37,14 +37,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
 
     public MainFrame() {
-        tableView = new TableView(groupOfAnimalsList);
+        tableView = new TableView(groupOfAnimalsList, SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(PADDING_LENGTH, PADDING_LENGTH, PADDING_LENGTH, PADDING_LENGTH));
-        tableView.setMaximumSize(new Dimension(SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT));
         initButtons();
         panel.add(tableView);
         panel.add(Box.createVerticalStrut(10));
@@ -57,7 +56,6 @@ public class MainFrame extends JFrame implements ActionListener {
     private void initButtons() {
         buttonPanel.setMaximumSize(new Dimension(BUTTON_PANEL_WIDTH, BUTTON_PANEL_HEIGHT));
         buttonPanel.setLayout(new GridLayout(3, 3, 15, 15));
-        buttonPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         for (JButton button : new JButton[] {
                 createGroupButton,
                 modifyGroupButton,
