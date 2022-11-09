@@ -9,6 +9,7 @@
 package model;
 
 import java.io.*;
+import java.util.Objects;
 
 public class Animal implements Cloneable, Serializable {
     private String name;
@@ -168,5 +169,18 @@ public class Animal implements Cloneable, Serializable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+        return age == animal.age && Double.compare(animal.weight, weight) == 0 && Objects.equals(name, animal.name) && Objects.equals(type, animal.type) && species == animal.species;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type, age, weight, species);
     }
 }

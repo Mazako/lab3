@@ -6,6 +6,6 @@ import javax.swing.*;
 
 public class App {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new GroupViewWindow(null, null));
+        SwingUtilities.invokeLater(MainFrame::new);
     }
 }

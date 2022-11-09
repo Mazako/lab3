@@ -1,6 +1,9 @@
 package view;
 
+import model.AnimalException;
+import model.collection.CollectionType;
 import model.collection.GroupOfAnimals;
+import view.group.GroupViewWindow;
 import view.table.TableView;
 
 import javax.swing.*;
@@ -8,11 +11,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-    public static final int WINDOW_WIDTH = 650;
+    public static final int WINDOW_WIDTH = 660;
     public static final int WINDOW_HEIGHT = 700;
     public static final int SCROLL_PANE_HEIGHT = 450;
     public static final int SCROLL_PANE_WIDTH = 630;
@@ -34,6 +38,8 @@ public class MainFrame extends JFrame implements ActionListener {
     private final JButton productButton = new JButton("Iloczyn grup");
     private final JButton symDiffButton = new JButton("Różnica symetryczna");
 
+    private final JComboBox<CollectionType> collectionTypeJComboBox = new JComboBox<>(CollectionType.values());
+
     private List<GroupOfAnimals> groupOfAnimalsList = new ArrayList<>();
 
 
@@ -43,6 +49,7 @@ public class MainFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
+        this.setTitle("Zarządzanie grupami");
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(PADDING_LENGTH, PADDING_LENGTH, PADDING_LENGTH, PADDING_LENGTH));
         initButtons();
@@ -75,6 +82,62 @@ public class MainFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        try {
+            if (source == createGroupButton) {
+                createGroup();
+            } else if (source == removeGroupButton) {
+                removeGroup();
+            } else if (source == modifyGroupButton) {
+                modifyGroup();
+            }
+        } catch (AnimalException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Błąd",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } finally {
+            tableView.refreshView(groupOfAnimalsList);
+        }
+    }
 
+    private void modifyGroup() throws AnimalException {
+        int selectedRow = tableView.getSelectedRow();
+        GroupOfAnimals group = groupOfAnimalsList.get(selectedRow);
+        GroupViewWindow view = new GroupViewWindow(group, this);
+    }
+
+    private void removeGroup() throws AnimalException {
+        int selectedRow = tableView.getSelectedRow();
+        groupOfAnimalsList.remove(selectedRow);
+    }
+
+    private void createGroup() throws AnimalException {
+        String name = JOptionPane.showInputDialog(
+                this,
+                "Wybierz nazwę",
+                "Nazwa",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        if (name == null) {
+            return;
+        }
+        if (name.trim().equals("")) {
+            throw new AnimalException("Imię nie może być puste");
+        }
+         Object option = JOptionPane.showInputDialog(this,
+                "Wybierz kolekcję",
+                "Kolekcja",
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                CollectionType.values(),
+                null
+         );
+        CollectionType collection = (CollectionType) option;
+        GroupOfAnimals group = new GroupOfAnimals(collection, name);
+        groupOfAnimalsList.add(group);
     }
 }

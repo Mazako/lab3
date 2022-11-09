@@ -48,7 +48,7 @@ class AddAnimalDialog extends JDialog implements ActionListener {
     private Animal animal;
 
 
-    public AddAnimalDialog(Frame owner, Animal animal) {
+    public AddAnimalDialog(JDialog owner, Animal animal) {
         super(owner, true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -59,12 +59,15 @@ class AddAnimalDialog extends JDialog implements ActionListener {
         speciesComboBox = new JComboBox<>(Species.getSpeciesArrayWithoutUnknown());
 
         if (!(animal == null)) {
+            this.animal = animal;
             this.setTitle(animal.getName());
             nameTextField.setText(animal.getName());
             typeTextField.setText(animal.getType());
             ageTextField.setText(Integer.toString(animal.getAge()));
             weightTextField.setText(Double.toString(animal.getWeight()));
             speciesComboBox.setSelectedIndex(animal.getSpecies().ordinal());
+        } else {
+            this.animal = new Animal();
         }
 
         readyButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
@@ -116,7 +119,7 @@ class AddAnimalDialog extends JDialog implements ActionListener {
         this.setVisible(true);
     }
 
-    public AddAnimalDialog(Frame owner) {
+    public AddAnimalDialog(JDialog owner) {
         this(owner, null);
     }
 
@@ -127,7 +130,7 @@ class AddAnimalDialog extends JDialog implements ActionListener {
             this.dispose();
         } else if (source == readyButton) {
             try {
-                animal = createAnimal();
+                createAnimal();
                 this.dispose();
             } catch (AnimalException | NumberFormatException ex) {
                 String message = ex.getMessage();
@@ -144,8 +147,7 @@ class AddAnimalDialog extends JDialog implements ActionListener {
         }
     }
 
-    private Animal createAnimal() throws AnimalException {
-        Animal animal = new Animal();
+    private void createAnimal() throws AnimalException {
         String name = nameTextField.getText();
         String type = typeTextField.getText();
         int age = Integer.parseInt(ageTextField.getText());
@@ -156,7 +158,6 @@ class AddAnimalDialog extends JDialog implements ActionListener {
         animal.setAge(age);
         animal.setWeight(weight);
         animal.setSpecies(species);
-        return animal;
     }
 
     public Animal getAnimal() {

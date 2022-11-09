@@ -37,14 +37,13 @@ public enum CollectionType {
     }
 
     public Collection<Animal> getCollection() throws AnimalException{
-        switch (this) {
+        return switch (this) {
             case VECTOR -> new Vector<>();
             case HASH_SET -> new HashSet<>();
             case TREE_SET -> new TreeSet<>();
             case ARRAY_LIST -> new ArrayList<>();
             case LINKED_LIST -> new LinkedList<>();
-        }
-        throw new AnimalException("Niewspierany typ kolekcji");
+        };
     }
 
 }

@@ -4,7 +4,7 @@ import model.Animal;
 import model.AnimalException;
 import model.collection.CollectionType;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 public class GroupOfAnimals implements Iterable<Animal>, Serializable {
@@ -35,6 +35,10 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         return collection.iterator();
     }
 
+    public boolean remove(Animal animal) {
+        return collection.remove(animal);
+    }
+
     public int size() {
         return collection.size();
     }
@@ -43,6 +47,60 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         collection.add(animal);
     }
 
+    public Optional<Animal> find(Animal animal) {
+        Iterator<Animal> iterator = iterator();
+        while (iterator.hasNext()) {
+            Animal nextAnimal = iterator.next();
+            if (animal.equals(nextAnimal)) {
+                return Optional.of(nextAnimal);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static void writeGroupOfAnimalsToFile(GroupOfAnimals group, File file) throws AnimalException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(group);
+        } catch (FileNotFoundException e) {
+            throw new AnimalException("Nie znaleziono pliku: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new AnimalException("Błąd w zapisie do pliku");
+        }
+    }
+
+    public static GroupOfAnimals readGroupOfAnimalsFromFile(File file) throws AnimalException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (GroupOfAnimals) ois.readObject();
+        } catch (FileNotFoundException e) {
+            throw new AnimalException("Nie znaleziono pliku: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new AnimalException("Błąd w zapisie do pliku");
+        } catch (ClassNotFoundException e) {
+            throw new AnimalException("Niepoprawny typ danych");
+        }
+    }
+
+    public static void writeListOfGroupsToFile(List<GroupOfAnimals> list, File file) throws AnimalException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(list);
+        } catch (FileNotFoundException e) {
+            throw new AnimalException("Nie znaleziono pliku: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new AnimalException("Błąd w zapisie do pliku");
+        }
+    }
+
+    public static List<GroupOfAnimals> readListOfGroupsToFile(File file) throws AnimalException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (List<GroupOfAnimals>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            throw new AnimalException("Nie znaleziono pliku: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new AnimalException("Błąd w zapisie do pliku");
+        } catch (ClassNotFoundException e) {
+            throw new AnimalException("Niepoprawny typ danych");
+        }
+    }
     public void sortByName() throws AnimalException {
         if(!isSortable()) {
             throw new AnimalException("Kolekcji " + collectionType + " nie można sortować.");

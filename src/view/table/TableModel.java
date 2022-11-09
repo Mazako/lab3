@@ -34,6 +34,9 @@ class TableModel extends DefaultTableModel {
 
     public TableModel(GroupOfAnimals groupOfAnimals) {
         super(GROUP_HEADERS, 0);
+        if (groupOfAnimals == null) {
+            return;
+        }
         Iterator<Animal> iterator = groupOfAnimals.iterator();
         while (iterator.hasNext()) {
             Animal animal = iterator.next();

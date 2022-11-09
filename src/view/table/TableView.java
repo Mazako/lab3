@@ -1,5 +1,8 @@
 package view.table;
 
+import model.Animal;
+import model.AnimalException;
+import model.Species;
 import model.collection.GroupOfAnimals;
 
 import javax.swing.*;
@@ -14,9 +17,9 @@ public class TableView extends JScrollPane {
         this(width, height);
         tableModel = new TableModel(groupOfAnimalsList);
         table = new JTable(tableModel);
+        this.setViewportView(table);
         table.setFillsViewportHeight(true);
         table.setRowSelectionAllowed(true);
-        this.setViewportView(table);
     }
 
     private TableView(int width, int height) {
@@ -27,15 +30,19 @@ public class TableView extends JScrollPane {
         this(width, height);
         tableModel = new TableModel(groupOfAnimals);
         table = new JTable(tableModel);
+        this.setViewportView(table);
         table.setFillsViewportHeight(true);
         table.setRowSelectionAllowed(true);
-        this.setViewportView(table);
     }
 
 
 
-    public int getSelectedRow() {
-        return table.getSelectedRow();
+    public int getSelectedRow() throws AnimalException {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            throw new AnimalException("Nie wybrano żadnego zwierzęcia");
+        }
+        return selectedRow;
     }
 
     public void refreshView(List<GroupOfAnimals> groupOfAnimalsList) {
@@ -46,6 +53,15 @@ public class TableView extends JScrollPane {
     public void refreshView(GroupOfAnimals groupOfAnimals) {
         tableModel = new TableModel(groupOfAnimals);
         table.setModel(tableModel);
+    }
+
+    public Animal getAnimalFromTable(int index) {
+        String name = (String) tableModel.getValueAt(index, 0);
+        String type = (String) tableModel.getValueAt(index, 1);
+        int age = (int) tableModel.getValueAt(index, 2);
+        double weight = (double) tableModel.getValueAt(index, 3);
+        Species species = (Species) tableModel.getValueAt(index, 4);
+        return new Animal(name, type, age, weight, species);
     }
 }
 
