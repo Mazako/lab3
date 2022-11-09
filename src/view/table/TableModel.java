@@ -1,7 +1,7 @@
-package view;
+package view.table;
 
 import model.Animal;
-import model.GroupOfAnimals;
+import model.collection.GroupOfAnimals;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.Iterator;
@@ -34,7 +34,6 @@ class TableModel extends DefaultTableModel {
 
     public TableModel(GroupOfAnimals groupOfAnimals) {
         super(GROUP_HEADERS, 0);
-        //todo: dodać dodwanie
         Iterator<Animal> iterator = groupOfAnimals.iterator();
         while (iterator.hasNext()) {
             Animal animal = iterator.next();

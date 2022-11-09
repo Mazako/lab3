@@ -1,4 +1,8 @@
-package model;
+package model.collection;
+
+import model.Animal;
+import model.AnimalException;
+import model.collection.CollectionType;
 
 import java.io.Serializable;
 import java.util.*;

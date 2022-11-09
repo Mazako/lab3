@@ -1,4 +1,7 @@
-package model;
+package model.collection;
+
+import model.Animal;
+import model.AnimalException;
 
 import java.util.*;
 

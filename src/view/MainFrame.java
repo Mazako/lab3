@@ -1,6 +1,7 @@
 package view;
 
-import model.GroupOfAnimals;
+import model.collection.GroupOfAnimals;
+import view.table.TableView;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,7 +6,7 @@
  *    Data: pazdziernik 2022 r.
  */
 
-package view;
+package view.group;
 
 import model.Animal;
 import model.AnimalException;

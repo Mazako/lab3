@@ -1,6 +1,7 @@
-package view;
+package view.group;
 
-import model.GroupOfAnimals;
+import model.collection.GroupOfAnimals;
+import view.MainFrame;
 
 import javax.swing.*;
 

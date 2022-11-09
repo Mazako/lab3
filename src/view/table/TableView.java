@@ -1,13 +1,12 @@
-package view;
+package view.table;
 
-import model.GroupOfAnimals;
+import model.collection.GroupOfAnimals;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-class TableView extends JScrollPane {
+public class TableView extends JScrollPane {
     private JTable table;
     private TableModel tableModel;
 

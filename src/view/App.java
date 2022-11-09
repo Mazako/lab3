@@ -1,5 +1,7 @@
 package view;
 
+import view.group.GroupViewWindow;
+
 import javax.swing.*;
 
 public class App {
