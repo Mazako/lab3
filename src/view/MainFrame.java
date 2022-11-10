@@ -14,6 +14,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -28,6 +30,18 @@ public class MainFrame extends JFrame implements ActionListener {
     public static final String ABOUT_MESSAGE = "Program do zarządzania grupami zwierząt\n\n" +
                                                 "Autor: Michał Maziarz, grupa wtorek 13:15\n\n" +
                                                 "Data: Listopad 2022";
+
+    public static final String OR_MESSAGE = "SUMA GRUP\n\n" +
+                                        "Tworzenie grupy zawierającej wszystkie osoby z grupy pierwszej\n" +
+                                        "oraz wszystkie osoby z grupy drugiej\n";
+    public static final String AND_MESSAGE = "ILOCZYN GRUP\n\n" +
+                                            "Tworzenie grupy osób, które należą zarówno do grupy pierwszej\n" +
+                                            "Jak i do grupy drugiej\n";
+    public static final String DIFF_MESSAGE = "RÓŻNICA GRUP\n\n" +
+                                            "Tworzenie grupy osób, które należą do grupy pierwszej\n" +
+                                            "I nie ma ich w grupie drugiej\n";
+    public static final String XOR_MESSAGE = "RÓŻNICA SYMETRYCZNA GRUP\n\n" +
+                                            "Tworzenie grupy zawierającej osoby należące tylko do jednej z dwóch grup\n";
     public static final String INITIAL_BINARY_FILENAME = "init.o";
 
     private TableView tableView;
@@ -171,6 +185,8 @@ public class MainFrame extends JFrame implements ActionListener {
                         "O programie",
                         JOptionPane.INFORMATION_MESSAGE
                 );
+            } else if (source == sumButton || source == orMenuItem) {
+                createOrGroup();
             }
         } catch (AnimalException ex) {
             ex.printStackTrace();
@@ -183,6 +199,54 @@ public class MainFrame extends JFrame implements ActionListener {
         } finally {
             tableView.refreshView(groupOfAnimalsList);
         }
+    }
+
+    private void showCreationCancelInfo() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Anulowano tworzenie grupy",
+                "Anulowano",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+
+    private void showCreationSuccessInfo() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Pomyślne złączono grupy",
+                "Sukces",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void createOrGroup() throws AnimalException {
+        GroupOfAnimals group1 = selectGroup(OR_MESSAGE, "Wybierz pierwszą grupę");
+        if (group1 == null) {
+            showCreationCancelInfo();
+            return;
+        }
+        GroupOfAnimals group2 = selectGroup(OR_MESSAGE, "Wybierz drugą grupę");
+        if (group2 == null) {
+            showCreationCancelInfo();
+            return;
+        }
+        GroupOfAnimals orGroup = GroupOfAnimals.createOrGroup(group1, group2);
+        groupOfAnimalsList.add(orGroup);
+        showCreationSuccessInfo();
+    }
+
+    private GroupOfAnimals selectGroup(String message, String group) {
+        String finalMessage = message + group;
+        Object option = JOptionPane.showInputDialog(this,
+                finalMessage,
+                "Wybierz grupę",
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                groupOfAnimalsList.toArray(),
+                null
+        );
+        return (GroupOfAnimals) option;
+
     }
 
     private void readGroup() throws AnimalException {

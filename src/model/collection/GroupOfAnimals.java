@@ -31,6 +31,11 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
     }
 
     @Override
+    public String toString() {
+        return name + " [" + collectionType + "]";
+    }
+
+    @Override
     public Iterator<Animal> iterator() {
         return collection.iterator();
     }
