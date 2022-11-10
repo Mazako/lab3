@@ -165,4 +165,57 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         }
         this.name = name;
     }
+
+    public static GroupOfAnimals createOrGroup(GroupOfAnimals group1, GroupOfAnimals group2) throws AnimalException {
+        CollectionType type = getGroupTypeFromTwo(group1, group2);
+        String name = group1.name + " OR " + group2.name;
+        GroupOfAnimals group = new GroupOfAnimals(type, name);
+        group.collection.addAll(group1.collection);
+        group.collection.addAll(group2.collection);
+        return group;
+    }
+
+    public static GroupOfAnimals createAndGroup(GroupOfAnimals group1, GroupOfAnimals group2) throws AnimalException {
+        CollectionType type = getGroupTypeFromTwo(group1, group2);
+        String name = group1.name + " AND " + group2.name;
+        GroupOfAnimals group = new GroupOfAnimals(type, name);
+        Collection<Animal> tmpCollection = group.getCollectionType().getCollection();
+        tmpCollection.addAll(group1.collection);
+        for (Animal animal : group2.collection) {
+            if (tmpCollection.remove(animal)) {
+                group.collection.add(animal);
+            }
+        }
+        return group;
+    }
+
+    public static GroupOfAnimals createDiffGroup(GroupOfAnimals group1, GroupOfAnimals group2) throws AnimalException {
+        CollectionType type = getGroupTypeFromTwo(group1, group2);
+        String name = group1.name + " SUB " + group2.name;
+        GroupOfAnimals group = new GroupOfAnimals(type, name);
+        group.collection.addAll(group1.collection);
+        for (Animal animal : group2.collection) {
+            group.remove(animal);
+        }
+        return group;
+    }
+
+    public static GroupOfAnimals createXorGroup(GroupOfAnimals group1, GroupOfAnimals group2) throws AnimalException {
+        CollectionType type = getGroupTypeFromTwo(group1, group2);
+        String name = group1.name + " XOR " + group2.name;
+        GroupOfAnimals animals = new GroupOfAnimals(type, name);
+        Collection<Animal> group1DiffGroup2 = createDiffGroup(group1, group2).collection;
+        Collection<Animal> group2DiffGroup1 = createDiffGroup(group2, group1).collection;
+        animals.collection.addAll(group2DiffGroup1);
+        animals.collection.addAll(group1DiffGroup2);
+        return animals;
+    }
+
+    private static CollectionType getGroupTypeFromTwo(GroupOfAnimals group1, GroupOfAnimals group2) {
+        if (group2 instanceof Set<?> && !(group1 instanceof Set<?>)) {
+            return group2.getCollectionType();
+        } else {
+            return group1.getCollectionType();
+        }
+    }
 }

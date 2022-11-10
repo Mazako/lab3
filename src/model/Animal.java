@@ -170,7 +170,7 @@ public class Animal implements Cloneable, Serializable {
             throw new AssertionError();
         }
     }
-
+    //todo: Zrobić swoje implementacje tych metod
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
