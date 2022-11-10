@@ -40,7 +40,7 @@ public class TableView extends JScrollPane {
     public int getSelectedRow() throws AnimalException {
         int selectedRow = table.getSelectedRow();
         if (selectedRow < 0) {
-            throw new AnimalException("Nie wybrano żadnego zwierzęcia");
+            throw new AnimalException("Nie wybrano żadnego rzędu");
         }
         return selectedRow;
     }

@@ -3,6 +3,7 @@ package view;
 import model.AnimalException;
 import model.collection.CollectionType;
 import model.collection.GroupOfAnimals;
+import model.collection.SpecialGroupOfAnimals;
 import view.group.GroupViewWindow;
 import view.table.TableView;
 
@@ -187,6 +188,12 @@ public class MainFrame extends JFrame implements ActionListener {
                 );
             } else if (source == sumButton || source == orMenuItem) {
                 createOrGroup();
+            } else if (source == productButton || source == andMenuItem) {
+                createAndGroup();
+            } else if (source == diffButton || source == diffMenuItem) {
+                createDiffGroup();
+            } else if (source == symDiffButton || source == xorMenuItem) {
+                createXorGroup();
             }
         } catch (AnimalException ex) {
             ex.printStackTrace();
@@ -199,6 +206,36 @@ public class MainFrame extends JFrame implements ActionListener {
         } finally {
             tableView.refreshView(groupOfAnimalsList);
         }
+    }
+
+    private void createXorGroup() throws AnimalException {
+        GroupOfAnimals[] twoGroups = getTwoGroups(XOR_MESSAGE);
+        if (twoGroups == null) {
+            return;
+        }
+        GroupOfAnimals xorGroup = SpecialGroupOfAnimals.createXorGroup(twoGroups[0], twoGroups[1]);
+        groupOfAnimalsList.add(xorGroup);
+        showCreationSuccessInfo();
+    }
+
+    private void createDiffGroup() throws AnimalException {
+        GroupOfAnimals[] twoGroups = getTwoGroups(DIFF_MESSAGE);
+        if (twoGroups == null) {
+            return;
+        }
+        GroupOfAnimals diffGroup = SpecialGroupOfAnimals.createDiffGroup(twoGroups[0], twoGroups[1]);
+        groupOfAnimalsList.add(diffGroup);
+        showCreationSuccessInfo();
+    }
+
+    private void createAndGroup() throws AnimalException {
+        GroupOfAnimals[] twoGroups = getTwoGroups(AND_MESSAGE);
+        if (twoGroups == null) {
+            return;
+        }
+        GroupOfAnimals andGroup = SpecialGroupOfAnimals.createAndGroup(twoGroups[0], twoGroups[1]);
+        groupOfAnimalsList.add(andGroup);
+        showCreationSuccessInfo();
     }
 
     private void showCreationCancelInfo() {
@@ -219,18 +256,26 @@ public class MainFrame extends JFrame implements ActionListener {
         );
     }
 
-    private void createOrGroup() throws AnimalException {
-        GroupOfAnimals group1 = selectGroup(OR_MESSAGE, "Wybierz pierwszą grupę");
+    private GroupOfAnimals[] getTwoGroups(String message) {
+        GroupOfAnimals group1 = selectGroup(message, "Wybierz pierwszą grupę");
         if (group1 == null) {
             showCreationCancelInfo();
-            return;
+            return null;
         }
-        GroupOfAnimals group2 = selectGroup(OR_MESSAGE, "Wybierz drugą grupę");
+        GroupOfAnimals group2 = selectGroup(message, "Wybierz drugą grupę");
         if (group2 == null) {
             showCreationCancelInfo();
+            return null;
+        }
+        return new GroupOfAnimals[]{group1, group2};
+    }
+
+    private void createOrGroup() throws AnimalException {
+        GroupOfAnimals[] twoGroups = getTwoGroups(OR_MESSAGE);
+        if (twoGroups == null) {
             return;
         }
-        GroupOfAnimals orGroup = GroupOfAnimals.createOrGroup(group1, group2);
+        GroupOfAnimals orGroup = SpecialGroupOfAnimals.createOrGroup(twoGroups[0], twoGroups[1]);
         groupOfAnimalsList.add(orGroup);
         showCreationSuccessInfo();
     }
