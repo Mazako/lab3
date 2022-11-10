@@ -10,6 +10,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +27,8 @@ public class MainFrame extends JFrame implements ActionListener {
     public static final int BUTTON_PANEL_WIDTH = 630;
     public static final int PADDING_LENGTH = 15;
 
+    public static final String INITIAL_BINARY_FILENAME = "init.o";
+
     private TableView tableView;
     private final JPanel panel = new JPanel();
     private final JPanel buttonPanel = new JPanel();
@@ -37,13 +42,11 @@ public class MainFrame extends JFrame implements ActionListener {
     private final JButton diffButton = new JButton("Różnica grup");
     private final JButton productButton = new JButton("Iloczyn grup");
     private final JButton symDiffButton = new JButton("Różnica symetryczna");
-
-    private final JComboBox<CollectionType> collectionTypeJComboBox = new JComboBox<>(CollectionType.values());
-
     private List<GroupOfAnimals> groupOfAnimalsList = new ArrayList<>();
 
 
     public MainFrame() {
+        this.addWindowListener(new WindowEventOperator());
         tableView = new TableView(groupOfAnimalsList, SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT);
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -90,6 +93,10 @@ public class MainFrame extends JFrame implements ActionListener {
                 removeGroup();
             } else if (source == modifyGroupButton) {
                 modifyGroup();
+            } else if (source == writeGroupButton) {
+                writeGroup();
+            } else if (source == readGroupButton) {
+                readGroup();
             }
         } catch (AnimalException ex) {
             ex.printStackTrace();
@@ -101,6 +108,39 @@ public class MainFrame extends JFrame implements ActionListener {
             );
         } finally {
             tableView.refreshView(groupOfAnimalsList);
+        }
+    }
+
+    private void readGroup() throws AnimalException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("./"));
+        fileChooser.showSaveDialog(this);
+        File selectedFile = fileChooser.getSelectedFile();
+        if (selectedFile != null) {
+            GroupOfAnimals group = GroupOfAnimals.readGroupOfAnimalsFromFile(selectedFile);
+            groupOfAnimalsList.add(group);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pomyślnie wczytano grupę",
+                    "Wczytano",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
+
+    private void writeGroup() throws AnimalException {
+        int selectedRow = tableView.getSelectedRow();
+        GroupOfAnimals group = groupOfAnimalsList.get(selectedRow);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("./"));
+        fileChooser.showSaveDialog(this);
+        File selectedFile = fileChooser.getSelectedFile();
+        if (selectedFile != null) {
+            GroupOfAnimals.writeGroupOfAnimalsToFile(group, selectedFile);
+            JOptionPane.showMessageDialog(this,
+                    "Pomyślnie zapisano grupę",
+                    "Zapisano",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -139,5 +179,42 @@ public class MainFrame extends JFrame implements ActionListener {
         CollectionType collection = (CollectionType) option;
         GroupOfAnimals group = new GroupOfAnimals(collection, name);
         groupOfAnimalsList.add(group);
+    }
+
+    private void writeAnimalsToFile(String fileName) throws AnimalException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(groupOfAnimalsList);
+        } catch (FileNotFoundException e) {
+            throw new AnimalException("Nie znaleziono pliku: " + fileName);
+        } catch (IOException e) {
+            throw new AnimalException("Błąd w zapisie do pliku");
+        }
+    }
+
+    private class WindowEventOperator extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            try {
+                writeAnimalsToFile(INITIAL_BINARY_FILENAME);
+                JOptionPane.showMessageDialog(
+                        MainFrame.this,
+                        "Zapisano stan grup",
+                        "Zapisano grupy",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } catch (AnimalException ex) {
+                JOptionPane.showMessageDialog(
+                        MainFrame.this,
+                        ex.getMessage(),
+                        "Błąd",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+            windowClosing(e);
+        }
     }
 }

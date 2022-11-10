@@ -42,8 +42,8 @@ public class GroupViewWindow extends JDialog implements ActionListener {
     JButton addNewAnimalButton = new JButton("Dodaj nową osobę");
     JButton editAnimalButton = new JButton("Edytuj osobę");
     JButton removeButton = new JButton("Usuń osobę");
-    JButton saveAnimalButton = new JButton("Wczytaj osobę z pliku");
-    JButton readAnimalButton = new JButton("Zapisz osobę do pliku");
+    JButton saveAnimalButton = new JButton("Zapisz osobę do pliku");
+    JButton readAnimalButton = new JButton("Wczytaj osobę z pliku");
 
     public GroupViewWindow(GroupOfAnimals group, JFrame parent) {
         super(parent, true);
@@ -133,6 +133,8 @@ public class GroupViewWindow extends JDialog implements ActionListener {
                 removeAnimal();
             } else if (source == saveAnimalButton) {
                 saveAnimal();
+            } else if (source == readAnimalButton) {
+                readAnimal();
             }
         } catch (AnimalException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -144,13 +146,37 @@ public class GroupViewWindow extends JDialog implements ActionListener {
     private void saveAnimal() throws AnimalException {
         int selectedRow = tableView.getSelectedRow();
         Animal animalFromTable = tableView.getAnimalFromTable(selectedRow);
-       // group.find()
+        Animal foundAnimal = group.find(animalFromTable)
+                .orElseThrow(() -> new AnimalException("Nie znaleziono w kolekcji takiego zwierzęcia"));
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setCurrentDirectory(new File("./"));
         jFileChooser.showSaveDialog(this);
         File selectedFile = jFileChooser.getSelectedFile();
         if (!(selectedFile == null)) {
+            Animal.writeAnimalToBinary(selectedFile.getAbsolutePath(),foundAnimal);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pomyślnie zapisano zwierzę",
+                    "Zapisano",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
 
+    private void readAnimal() throws AnimalException {
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setCurrentDirectory(new File("./"));
+        jFileChooser.showOpenDialog(this);
+        File selectedFile = jFileChooser.getSelectedFile();
+        if (!(selectedFile == null)) {
+            Animal animal = Animal.readAnimalFromBinary(selectedFile.getAbsolutePath());
+            group.add(animal);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pomyślnie zapisano zwierzę",
+                    "Zapisano",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
         }
     }
 
