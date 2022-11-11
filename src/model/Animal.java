@@ -11,7 +11,10 @@ package model;
 import java.io.*;
 import java.util.Objects;
 
-public class Animal implements Cloneable, Serializable {
+public class Animal implements Cloneable, Serializable, Comparable<Animal> {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String name;
     private String type;
     private int age;
@@ -170,17 +173,62 @@ public class Animal implements Cloneable, Serializable {
             throw new AssertionError();
         }
     }
-    //todo: Zrobić swoje implementacje tych metod
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Animal animal = (Animal) o;
-        return age == animal.age && Double.compare(animal.weight, weight) == 0 && Objects.equals(name, animal.name) && Objects.equals(type, animal.type) && species == animal.species;
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Animal animal = (Animal) obj;
+        if (!animal.getName().equals(this.name)) {
+            return false;
+        }
+        if (!animal.getType().equals(this.type)) {
+            return false;
+        }
+        if (animal.getAge() != this.age) {
+            return false;
+        }
+        if (animal.getWeight() != this.weight) {
+            return false;
+        }
+        if (animal.getSpecies() != animal.species) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, type, age, weight, species);
+    }
+
+    @Override
+    public int compareTo(Animal o) {
+        if (this.name.compareTo(o.name) > 0) {
+            return 1;
+        } else if (this.name.compareTo(o.name) < 0) {
+            return -1;
+        }
+        else if (this.age > o.age) {
+            return 1;
+        } else if (this.age < o.age) {
+            return -1;
+        } else if (this.weight > o.weight) {
+            return 1;
+        } else if (this.weight < o.weight) {
+            return -1;
+        } else if (this.species.compareTo(o.species) < 0){
+            return -1;
+        } else if (this.species.compareTo(o.species) > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

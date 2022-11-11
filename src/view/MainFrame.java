@@ -15,8 +15,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -45,7 +43,7 @@ public class MainFrame extends JFrame implements ActionListener {
                                             "Tworzenie grupy zawierającej osoby należące tylko do jednej z dwóch grup\n";
     public static final String INITIAL_BINARY_FILENAME = "init.o";
 
-    private TableView tableView;
+    private final TableView tableView;
     private final JPanel panel = new JPanel();
     private final JMenuBar menuBar = new JMenuBar();
     private final JMenu groupMenu = new JMenu("Grupy");
@@ -130,7 +128,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private void loadStartData() {
         try {
-            this.groupOfAnimalsList = readAnimalsFromFile(INITIAL_BINARY_FILENAME);
+            this.groupOfAnimalsList = GroupOfAnimals.readListOfGroupsToFile(new File(INITIAL_BINARY_FILENAME));
             JOptionPane.showMessageDialog(
                     this,
                     "Pomyślnie wczytano dane z pliku " + INITIAL_BINARY_FILENAME,
@@ -330,12 +328,15 @@ public class MainFrame extends JFrame implements ActionListener {
     private void modifyGroup() throws AnimalException {
         int selectedRow = tableView.getSelectedRow();
         GroupOfAnimals group = groupOfAnimalsList.get(selectedRow);
-        GroupViewWindow view = new GroupViewWindow(group, this);
+        new GroupViewWindow(group, this);
     }
 
     private void removeGroup() throws AnimalException {
         int selectedRow = tableView.getSelectedRow();
-        groupOfAnimalsList.remove(selectedRow);
+        GroupOfAnimals removed = groupOfAnimalsList.remove(selectedRow);
+        if (removed instanceof SpecialGroupOfAnimals) {
+            ((SpecialGroupOfAnimals) removed).invalidateListener();
+        }
     }
 
     private void createGroup() throws AnimalException {
@@ -364,33 +365,11 @@ public class MainFrame extends JFrame implements ActionListener {
         groupOfAnimalsList.add(group);
     }
 
-    private void writeAnimalsToFile(String fileName) throws AnimalException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            oos.writeObject(groupOfAnimalsList);
-        } catch (FileNotFoundException e) {
-            throw new AnimalException("Nie znaleziono pliku: " + fileName);
-        } catch (IOException e) {
-            throw new AnimalException("Błąd w zapisie do pliku");
-        }
-    }
-
-    private List<GroupOfAnimals> readAnimalsFromFile(String filename) throws AnimalException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(INITIAL_BINARY_FILENAME))) {
-            return (ArrayList<GroupOfAnimals>) ois.readObject();
-        } catch (FileNotFoundException e) {
-            throw new AnimalException("Nie znaleziono pliku: " + filename + "\n plik zostanie utworzony po zamknięciu programu");
-        } catch (IOException e) {
-            throw new AnimalException("Błąd w zapisie do pliku");
-        } catch (ClassNotFoundException e) {
-            throw new AnimalException("Niekompatybilny typ klasy");
-        }
-    }
-
     private class WindowEventOperator extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
             try {
-                writeAnimalsToFile(INITIAL_BINARY_FILENAME);
+                GroupOfAnimals.writeListOfGroupsToFile(groupOfAnimalsList ,new File(INITIAL_BINARY_FILENAME));
                 JOptionPane.showMessageDialog(
                         MainFrame.this,
                         "Zapisano stan grup",

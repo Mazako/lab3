@@ -2,18 +2,22 @@ package model.collection;
 
 import model.Animal;
 import model.AnimalException;
-import model.collection.CollectionType;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.*;
 
 public class GroupOfAnimals implements Iterable<Animal>, Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     protected Collection<Animal> collection;
     protected CollectionType collectionType;
     protected String name;
+
+    private final PropertyChangeSupport observable = new PropertyChangeSupport(this);
 
     public GroupOfAnimals(CollectionType collectionType, String name) throws AnimalException {
         setName(name);
@@ -23,13 +27,6 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         this.collectionType = collectionType;
         this.collection = collectionType.getCollection();
 
-    }
-
-    public GroupOfAnimals(String collectionTypeDescription, String name) throws AnimalException {
-        setName(name);
-        if (collectionTypeDescription == null) {
-            throw new AnimalException("Typ kolekcji nie może być pusty");
-        }
     }
 
     @Override
@@ -43,7 +40,9 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
     }
 
     public boolean remove(Animal animal) {
-        return collection.remove(animal);
+        boolean isRemoved = collection.remove(animal);
+        observable.firePropertyChange("size", size(), size() - 1);
+        return isRemoved;
     }
 
     public int size() {
@@ -52,6 +51,7 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
 
     public void add(Animal animal) {
         collection.add(animal);
+        observable.firePropertyChange("size", size(), size() + 1);
     }
 
     public Optional<Animal> find(Animal animal) {
@@ -146,20 +146,15 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         }
     }
 
-    public void setCollection(String collectionTypeDescription) throws AnimalException {
-        CollectionType collectionType = CollectionType.ofDescription(collectionTypeDescription);
-        setCollection(collectionType);
-    }
 
     private void convertCollection(CollectionType collectionType) throws AnimalException {
         Collection<Animal> oldCollection = this.collection;
         Collection<Animal> newCollection = collectionType.getCollection();
-        Iterator<Animal> iterator = oldCollection.iterator();
-        while (iterator.hasNext()) {
-            newCollection.add(iterator.next());
-        }
-        this.collection = newCollection;
+        newCollection.addAll(oldCollection);
+        CollectionType oldCollectionType = this.collectionType;
         this.collectionType = collectionType;
+        this.collection = newCollection;
+        observable.firePropertyChange("collectionType", oldCollectionType, newCollection);
     }
 
     public String getName() {
@@ -170,6 +165,16 @@ public class GroupOfAnimals implements Iterable<Animal>, Serializable {
         if (name == null || name.trim().equals("")) {
             throw new AnimalException("Nazwa grupy nie może być pusta");
         }
+        String prevName = this.name;
         this.name = name;
+        observable.firePropertyChange("name", prevName, this.name);
     }
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        observable.addPropertyChangeListener(pcl);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        observable.removePropertyChangeListener(pcl);
+    }
+
 }
