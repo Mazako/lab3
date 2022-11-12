@@ -1,3 +1,11 @@
+/*
+ * Program: Klasa reprezentująca grupę zwierząt która jest przechowywana w zadanej kolekcji
+ *
+ *    Plik: GroupOfAnimals.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package model.collection;
 
 import model.Animal;

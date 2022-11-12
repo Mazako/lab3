@@ -1,3 +1,11 @@
+/*
+ * Program: Klasa reprezentująca JScrollPane naszej tabeli
+ *
+ *    Plik: TableView.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package view.table;
 
 import model.Animal;

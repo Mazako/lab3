@@ -1,3 +1,12 @@
+/*
+ * Program: Specjalna grupa zwierząt, która jest sumą/częścią wspólną/różnicą/różnicą symetryczną dwóch
+ *          zwykłych grup
+ *
+ *    Plik: SpecialGroupOfAnimals.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package model.collection;
 
 import model.Animal;

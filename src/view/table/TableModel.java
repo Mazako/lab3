@@ -1,3 +1,11 @@
+/*
+ * Program: Model danych do tabeli
+ *
+ *    Plik: TableModel.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package view.table;
 
 import model.Animal;

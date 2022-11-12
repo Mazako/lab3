@@ -1,3 +1,11 @@
+/*
+ * Program: Klasa reprentująca główne okienko naszej aplikacji w której mozemy zarządzać listą grup naszej aplikacji
+ *
+ *    Plik: App.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package view;
 
 import model.AnimalException;

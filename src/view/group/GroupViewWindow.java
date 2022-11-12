@@ -1,3 +1,11 @@
+/*
+ * Program: Klasa reprezentująca okienko do wyświetlania i edycji zadanej grupy zwierząt
+ *
+ *    Plik: GroupViewWindow.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package view.group;
 
 import model.Animal;
@@ -195,6 +203,13 @@ public class GroupViewWindow extends JDialog implements ActionListener {
                 changeName();
             } else if (source == changeCollectionMenuItem) {
                 changeCollection();
+            } else if (source == authorMenuItem) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        MainFrame.ABOUT_MESSAGE,
+                        "O programie",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
             }
         } catch (AnimalException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);

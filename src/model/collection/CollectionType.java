@@ -1,3 +1,11 @@
+/*
+ * Program: Enum odpowiadający za reprezentowanie typu kolekcji
+ *
+ *    Plik: CollectionType.java
+ *
+ *   Autor: Michal Maziarz, 263913
+ *    Data: listopad 2022 r.
+ */
 package model.collection;
 
 import model.Animal;
